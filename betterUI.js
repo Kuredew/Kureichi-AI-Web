@@ -35,6 +35,7 @@ if (!id_user) {
     var id = generateUUID();
     //var id = crypto.randomUUID();
     localStorage.setItem('id_user', id);
+    var id_user = id;
 }
 
 console.log(id_user);
