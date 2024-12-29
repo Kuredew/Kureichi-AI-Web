@@ -32,6 +32,10 @@ ol{
     margin-left: 15px;
 }
 
+em{
+    color: #aaaaaa;
+}
+
 input {
     font-family: google-sans;
 }
