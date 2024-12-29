@@ -1,9 +1,7 @@
 //import { Stream } from "openai/streaming.mjs";
-// Play audio
-var musik = new Audio('starting over by maoi(soundcloud).mp3')
 
 // link api ke backendnya
-var url_backend = 'http://kureichi-ai-production.up.railway.app'
+var url_backend = 'https://kureichi-ai-production.up.railway.app'
 
 
 function sleep(ms) {
@@ -15,13 +13,10 @@ function sleep(ms) {
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendButton = document.getElementById('send-btn');
-const welcomeMessage = document.getElementById('welcome-message')
-
-// global variable buat ingatan sementara
-var prompt = [];
+const welcomeMessage = document.getElementById('welcome-message');
 
 // global variable buat id user
-let id_user = localStorage.getItem('id_user');
+var id_user = localStorage.getItem('id_user');
 
 // fungsi buat bikin uuid
 function generateUUID() {
@@ -175,7 +170,7 @@ function tulisPeringatan() {
 
     const p = document.createElement('p');
 
-    p.innerHTML = 'Chat bakalan ilang kalau refresh browser, tapi tenang gw udh bikin ingatan di AI nya<br><p style="font-size: smaller; color: brown;">Jika kamu tidak menyukai respon AI yang seperti ini, kamu bisa menekan tombol merah untuk mereset kepribadian dan ingatannya.</p>'
+    p.innerHTML = 'Chat bakalan ilang kalau refresh browser, tapi tenang gw udh bikin ingatan di AI nya<br><p style="font-size: smaller; color: brown;">Jika kamu ingin mereset ingatannya, kamu bisa menekan tombol merah.</p>'
 
     div.appendChild(p)
 
@@ -185,6 +180,7 @@ var sudah_dihapus = false;
 // Fungsi untuk mengirim pesan ke backend
 async function sendMessage() {
     const message = userInput.value.trim();
+    userInput.placeholder = "Tanya Kureichi"
 
     console.log(message)
 
@@ -230,8 +226,8 @@ sendButton.addEventListener('click', sendMessage);
 const resetButton = document.getElementById('reset-btn');
 
 function resetModel(){
-    const url_get = url_backend + "/reset?id=" + id_user
-    console.log(url_get)
+    const url_get = url_backend + "/reset?id=" + id_user;
+    console.log(url_get);
     
     var request = new Request({
         url: `${url_get}`,
@@ -240,9 +236,31 @@ function resetModel(){
     fetch(`${url_get}`, {
         method: 'GET',
     });
+    localStorage.removeItem('id_user');
+
+    
+    var id = generateUUID()
+    localStorage.setItem('id_user', id)
+    id_user = id
+    console.log(`id baru dibuat : ${id}`)
+    userInput.placeholder = 'Ingatan Dihapus'
+
 }
 
-resetButton.addEventListener('click', resetModel)
+var verif = false
+function verifikasi_reset() {
+    if (!verif){
+        window.alert('Kamu yakin ingin menghapus ingatannya? dia tidak akan lagi mengingatmu, klik tombol merah sekali lagi untuk melanjutkan')
+        verif = true
+    } else {
+        resetModel()
+        window.alert('Ingatan berhasil di hapus.')
+        verif = false
+    }
+}
+
+
+resetButton.addEventListener('click', verifikasi_reset)
 
 
 
