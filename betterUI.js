@@ -397,8 +397,10 @@ userInput.addEventListener('keypress', (e) => {
 
 
 var musik = new Audio('MiSide.mp3')
-function putarmusik(){
+async function putarmusik(){
     musik.play()
+    await sleep(500)
+    chatWrapper.scrollTop = chatWrapper.scrollHeight;
 }
 
 userInput.addEventListener('click', putarmusik)
