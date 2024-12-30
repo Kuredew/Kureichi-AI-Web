@@ -40,9 +40,12 @@ input {
     font-family: google-sans;
 }
 
-.container{
-    padding: 20px;
-    margin-bottom: 50px;
+.input-area{
+    display: flex;
+    height: 100%;
+    align-items: end;
+    justify-content: center;
+    gap: 5px;
 }
 
 .input-box{
@@ -57,34 +60,44 @@ input {
     margin-bottom: 20px;
     gap: 5px;
     text-align: center;
+    
 
     animation-name: opacity;
     animation-duration: 1s;
 }
 
-.input-box input{
+.input-box textarea{
     color: white;
     border: none;
     background-color: rgb(51, 53, 61);
-    border-radius: 100px;
+    border-radius: 30px;
     width: 50%;
-    height: 100%;
+    height: 25px;
     justify-content: center;
-    transition: 0.5s;
     font-family: google-sans;
     padding-left: 20px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    padding-right: 20px;
+    resize: none;
+
+    box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+
+    -ms-overflo-style: none;  /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 }
 
-.input-box input:hover{
-    background-color: rgb(28, 29, 32);
-}
+/*.input-box textarea:hover{
+    /*background-color: rgb(28, 29, 32);*/
+/*}*/
 
-.input-box input:focus{
+.input-box textarea:focus{
     outline: none;
 }
 
 
 .input-box button{
+    font-family: google-sans;
     padding: 10px;
     cursor: pointer;
     justify-content: end;
@@ -93,34 +106,65 @@ input {
     border: none;
     border-radius: 999px;
     background-color: rgb(34, 43, 53);
-    height: 100%;
+    height: 50px;
     transition: 1s;
+
+    box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
 }
 
 .input-box button:hover{
     background-color: rgb(25, 32, 39);
 }
 
-.input-box .reset-btn{
+
+.reset-btn{
+    color: rgb(255, 255, 255);
+    margin-top: 5px;
+    font-family: google-sans;
     background-color: brown;
+    border: none;
+    border-radius: 20px;
+    padding: 6px;
+    transition: 1s;
+}
+
+.reset-btn:hover{
+    background-color: rgb(121, 31, 31);
+    cursor: pointer;
 }
 
 .input-box p{
     margin-top: 8px;
-    font-size: smaller;
+    font-size: 8pt;
     color: #4d4e55;
 }
 
-.chat-box{
+.peringatan{
+    animation-name: opacity;
+    animation-duration: 10s;
+    position: fixed;
+    font-size: smaller;
+    padding: 10px;
+    width: 100%;
+    top: 0;
+    backdrop-filter: blur(5px);
+}
+
+.chat-wrapper{
     margin: auto;
     max-width: 800px;
     display: flex;
     flex-direction: column;
-    padding-top: 30px;
-    max-height: 430px;
     overflow-y: scroll;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    max-height: 100vh;
+    
+    -ms-overflo-style: none;  /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.chat-box{
+    margin-top: 90px;
+    margin-bottom: 90px;
 }
 
 .welcome-message{
@@ -165,7 +209,8 @@ input {
 
 .chat-box .user{
     flex-direction: column;
-    max-width: 500px;
+    max-width: 300px;
+    width: fit-content;
     background-color: rgb(57, 59, 66);
     border-radius: 20px;
     margin-left: auto;
@@ -180,6 +225,67 @@ input {
     padding: 10px;
     word-wrap: break-word;
 }
+
+
+.loading{
+    display: flex;
+    gap: 5px;
+    font-size: smaller;
+    color: #c8c9ce;
+}
+
+.load1{
+    opacity: 0%;
+    border-radius: 50px;
+    background-color: rgb(255, 255, 255);
+    width: 10px;
+    height: 10px;
+    animation-name: loading;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-fill-mode: forwards;
+    animation-delay: 0s;
+}
+
+.load2{
+    animation-iteration-count: infinite;
+    opacity: 0%;
+    border-radius: 50px;
+    background-color: rgb(255, 255, 255);
+    width: 10px;
+    height: 10px;
+    animation-name: loading;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.5s;
+}
+
+.load3{
+    animation-iteration-count: infinite;
+    opacity: 0%;
+    border-radius: 50px;
+    background-color: rgb(255, 255, 255);
+    width: 10px;
+    height: 10px;
+    animation-name: loading;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+    animation-delay: 1s;
+}
+
+
+@keyframes loading {
+    0%{
+        opacity: 0%;
+    }
+    50%{
+        opacity: 100%;
+    }
+    100%{
+        opacity: 0%;
+    }
+}
+
 
 .chat-box .ai {
     display: flex;
@@ -211,7 +317,7 @@ input {
     padding: 15px;
 }
 
-.chat-box .ai .text .waiting{
+.chat-wrapper .chat-box .ai .text .waiting .loading .tunggu{
     font-size: smaller;
     color: #c8c9ce;
 }

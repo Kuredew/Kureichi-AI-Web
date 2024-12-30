@@ -1,19 +1,12 @@
-//import { Stream } from "openai/streaming.mjs";
-
-// link api ke backendnya
-var url_backend = 'https://kureichi-ai-production.up.railway.app'
-
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
 
 // Ambil elemen-elemen dari DOM
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendButton = document.getElementById('send-btn');
 const welcomeMessage = document.getElementById('welcome-message');
+const chatWrapper = document.getElementById('chat-wrapper')
+
+chatWrapper.scrollTop = chatWrapper.scrollHeight;
 
 // global variable buat id user
 var id_user = localStorage.getItem('id_user');
@@ -35,6 +28,87 @@ if (!id_user) {
 
 console.log(id_user);
 
+//History Chat
+var chat_history = []
+
+// balikin kalo ada sesi sebelumnya
+var session = localStorage.getItem('chat_session')
+
+var sudah_dihapus = false;
+if (session) {
+    sudah_dihapus = true;
+
+    welcomeMessage.remove();
+    tulisPeringatan();
+
+    function addHistoryUserToChat(field) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        messageElement.classList.add('user');
+
+        teksDiv = document.createElement('div');
+        teksDiv.classList.add('text')
+        messageElement.appendChild(teksDiv)
+
+        teksDiv.innerHTML = field;
+        chatBox.appendChild(messageElement);
+        chatWrapper.scrollTop = chatWrapper.scrollHeight;
+    }
+
+    function addHistoryAIToChat(field) {
+        const messageAI = document.createElement('div');
+
+        messageAI.classList.add('message');
+        messageAI.classList.add('ai');
+
+        const divImg = document.createElement('div');
+        divImg.classList.add('image')
+
+        const messageImg = document.createElement('img');
+        messageImg.src = 'Furina 5.jpg';
+        divImg.appendChild(messageImg);
+        messageAI.appendChild(divImg);
+
+        const divText = document.createElement('div');
+        divText.classList.add('text')
+
+        messageAI.appendChild(divText);
+
+        chatBox.appendChild(messageAI);
+
+        divText.innerHTML= field;
+
+        chatWrapper.scrollTop = chatWrapper.scrollHeight;
+    }
+
+    let parsed = JSON.parse(session)
+    parsed.forEach(addHistory)
+
+
+    function addHistory(value, index, array) {
+        console.log(value)
+        if ('user' in value){
+            let field = value['user']
+            addHistoryUserToChat(field)
+            chat_history.push({user: field})
+        } else{
+            let field = value['ai']
+            addHistoryAIToChat(field)
+            chat_history.push({ai: field})
+            //saveAiMessageToLocalStorage(field)
+        }
+    }
+}
+
+
+// link api ke backendnya
+var url_backend = 'https://kureichi-ai-production.up.railway.app'
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
 // Markdown nya shadowdown
 const converter = new showdown.Converter();
 
@@ -51,7 +125,9 @@ function addMessageUserToChat(message, sender) {
 
     teksDiv.innerHTML = fixed_text;
     chatBox.appendChild(messageElement);
-    chatBox.scrollTop = chatBox.scrollHeight; // Scroll ke bawah otomatis
+    chatWrapper.scrollTop = chatWrapper.scrollHeight; // Scroll ke bawah otomatis
+
+    saveUserMessageToLocalStorage(fixed_text)
 }
 
 function addMessageAIToChat(){
@@ -80,9 +156,28 @@ function addMessageAIToChat(){
 
     text.innerHTML = "ini hanya sebuah test";
 
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatWrapper.scrollTop = chatWrapper.scrollHeight;
 }
 
+function saveAiMessageToLocalStorage(ai_msg) {
+    msg = {ai: ai_msg.pop()}
+    chat_history.push(msg)
+    console.log(`ai : ${JSON.stringify(msg)}`)
+    //console.log(ai_msg)
+
+    var decoded = JSON.stringify(chat_history)
+
+    localStorage.setItem('chat_session', decoded)
+
+    console.log(localStorage.getItem('chat_session'))
+
+    //localStorage.removeItem('chat_session')
+}
+
+function saveUserMessageToLocalStorage(user_msg) {
+    var msg = {user: user_msg}
+    chat_history.push(msg)
+}
 
 async function askAI(prompt) {
 
@@ -107,29 +202,34 @@ async function askAI(prompt) {
 
     chatBox.appendChild(messageAI);
 
-    divText.innerHTML= '<p class="waiting">Tunggu bang...</p>';
+    divText.innerHTML= '<p class="waiting"><div class="loading"><p class="tunggu">Tunggu Bang...</p> <div class="load1"></div><div class="load2"></div><div class="load3"></div></div></p>';
 
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatWrapper.scrollTop = chatWrapper.scrollHeight;
 
     const url_get = url_backend + "/chat?message=" + prompt + '&id=' + id_user
     console.log(url_get)
     const response = new EventSource(url_get);
 
+    var ai_msg = []
     response.onmessage = function(event) {
         let token = event.data;
         if (token === '[DONE]'){
             response.close();
+            saveAiMessageToLocalStorage(ai_msg)
             return;
         }
+        ai_msg.push(token)
 
         //var fixed_text = converter.makeHtml(tulis);
 
         divText.innerHTML = token;
         console.log(token)
-        chatBox.scrollTop = chatBox.scrollHeight;
+        //chatWrapper.animate({ scrollTop: chatWrapper.scrollHeight }, 800);
+        chatWrapper.scrollTop = chatWrapper.scrollHeight;
         var beep = new Audio('bleep001.wav')
         beep.play()
     }
+    
 
     /*while (true) {
         const { value } = await reader.read();
@@ -170,13 +270,18 @@ function tulisPeringatan() {
 
     const p = document.createElement('p');
 
-    p.innerHTML = 'Chat bakalan ilang kalau refresh browser, tapi tenang gw udh bikin ingatan di AI nya<br><p style="font-size: smaller; color: brown;">Jika kamu ingin mereset ingatannya, kamu bisa menekan tombol merah.</p>'
+    console.log(id_user)
+
+    //p.innerHTML = `ID Kamu : ${id_user}<br><p style="font-size: smaller; color: brown;">Jika kamu ingin mereset ingatannya, kamu bisa menekan tombol merah.</p>`
+    p.innerHTML = `ID Kamu : ${id_user}<br><p style="font-size: smaller; color: brown;">Ini masih experimental, lapor ke dev jika mengalami bug<br><button class="reset-btn" id="reset-btn">Hapus Ingatan</button></p>`
 
     div.appendChild(p)
 
+    const resetButton = document.getElementById('reset-btn');
+    resetButton.addEventListener('click', verifikasi_reset)
+
 }
 
-var sudah_dihapus = false;
 // Fungsi untuk mengirim pesan ke backend
 async function sendMessage() {
     const message = userInput.value.trim();
@@ -223,11 +328,10 @@ async function sendMessage() {
 // Menangani klik tombol kirim
 sendButton.addEventListener('click', sendMessage);
 
-const resetButton = document.getElementById('reset-btn');
-
 function resetModel(){
     const url_get = url_backend + "/reset?id=" + id_user;
     console.log(url_get);
+    localStorage.removeItem('chat_session')
     
     var request = new Request({
         url: `${url_get}`,
@@ -243,7 +347,7 @@ function resetModel(){
     localStorage.setItem('id_user', id)
     id_user = id
     console.log(`id baru dibuat : ${id}`)
-    userInput.placeholder = 'Ingatan Dihapus'
+    userInput.placeholder = 'Ingatan Dihapus, Reload untuk menghapus pesan'
 
 }
 
@@ -259,14 +363,34 @@ function verifikasi_reset() {
     }
 }
 
+const textArea = document.querySelector('textarea')
 
-resetButton.addEventListener('click', verifikasi_reset)
 
+//textArea.style.transition = '0.2s'
+textArea.addEventListener('input', async e => {
+    chatWrapper.scrollTop = chatWrapper.scrollHeight;
+    //chatWrapper.animate({ scrollTop: chatWrapper.scrollHeight }, 1000);
+    textArea.style.height = "25px";
+
+    //textArea.style.transition = 'none'
+
+    //console.log(textArea.scrollHeight)
+    
+    let src = await e.target.scrollHeight;
+    //console.log(src);
+
+    textArea.style.height = `${src - 25}px`;
+    console.log(`${src - 25}`);
+    //textArea.style.transition = '0.2s'
+    
+    //src = e.target.scrollHeight;
+});
 
 
 // Menangani enter untuk mengirim pesan
 userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
         sendMessage();
     }
 });
