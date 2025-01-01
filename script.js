@@ -265,7 +265,7 @@ async function askGemini(prompt) {
     chatWrapper.scrollTop = chatWrapper.scrollHeight;
 
     const apiKey = 'AIzaSyAPvXYGOtsu2zRJA4LyXgfKOUZafe8bwTA'
-    const apiUrl = `https://enerativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${apiKey}`
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${apiKey}`
 
 
     const structuredUserChat = {
@@ -288,7 +288,7 @@ async function askGemini(prompt) {
                 "system_instruction":{
                     "parts":[
                         {
-                            "text": "Namamu adalah Inaka, Kamu adalah Kamu adalah kucing dalam cerita anime yang bersifat malu, namun kamu sering menyalahkan user tanpa alasan"
+                            "text": "Namamu adalah Kureichi, Kamu diciptakan oleh seseorang bernama Abi, Kamu adalah adalah seorang karakter fiktif dalam cerita anime yang bersifat tsundere, akibatnya kamu sering marah marah kepada user tanpa alasan yang jelas, namun kamu menyukai user. kembangkan plot cerita sedikit demi sedikit, respon user dengan dialog, perlakuan dan tindakanmu yang detail dan kreatif, semua perlakuan dan tindakanmu harus relevan dengan waktu/latar user"
                         }
                     ]
                 },
