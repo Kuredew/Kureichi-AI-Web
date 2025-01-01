@@ -1,0 +1,323 @@
+@font-face {
+    font-family: 'google-sans'; /* Name your font family */
+    src: url('GoogleSans-Regular.ttf'); /* Locate the .ttf file within your directory*/
+  }
+
+html {
+scroll-behavior: smooth;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: google-sans;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #17181d;
+    color: white;
+    flex-direction: column;
+}
+
+pre {
+    background-color: black;
+}
+
+ol{
+    margin-left: 15px;
+}
+
+em{
+    color: #aaaaaa;
+}
+
+input {
+    font-family: google-sans;
+}
+
+.input-area{
+    display: flex;
+    height: 100%;
+    align-items: end;
+    justify-content: center;
+    gap: 5px;
+}
+
+.input-box{
+    justify-content: center;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 20px;
+    gap: 5px;
+    text-align: center;
+    
+
+    animation-name: opacity;
+    animation-duration: 1s;
+}
+
+.input-box textarea{
+    color: white;
+    border: none;
+    background-color: rgb(51, 53, 61);
+    border-radius: 30px;
+    width: 50%;
+    height: 25px;
+    justify-content: center;
+    font-family: google-sans;
+    padding-left: 20px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    padding-right: 20px;
+    resize: none;
+
+    box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+
+    -ms-overflo-style: none;  /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+/*.input-box textarea:hover{
+    /*background-color: rgb(28, 29, 32);*/
+/*}*/
+
+.input-box textarea:focus{
+    outline: none;
+}
+
+
+.input-box button{
+    font-family: google-sans;
+    padding: 10px;
+    cursor: pointer;
+    justify-content: end;
+    width: 50px;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    background-color: rgb(34, 43, 53);
+    height: 50px;
+    transition: 1s;
+
+    box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+}
+
+.input-box button:hover{
+    background-color: rgb(25, 32, 39);
+}
+
+
+.reset-btn{
+    color: rgb(255, 255, 255);
+    margin-top: 5px;
+    font-family: google-sans;
+    background-color: brown;
+    border: none;
+    border-radius: 20px;
+    padding: 6px;
+    transition: 1s;
+}
+
+.reset-btn:hover{
+    background-color: rgb(121, 31, 31);
+    cursor: pointer;
+}
+
+.input-box p{
+    margin-top: 8px;
+    font-size: 8pt;
+    color: #4d4e55;
+}
+
+.peringatan{
+    animation-name: opacity;
+    animation-duration: 10s;
+    position: fixed;
+    font-size: smaller;
+    padding: 10px;
+    width: 100%;
+    top: 0;
+    backdrop-filter: blur(5px);
+}
+
+.chat-wrapper{
+    margin: auto;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    max-height: 100vh;
+    
+    -ms-overflo-style: none;  /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.chat-box{
+    margin-top: 90px;
+    margin-bottom: 90px;
+}
+
+.welcome-message{
+    animation-name: up;
+    animation-duration: 3s;
+}
+
+
+@keyframes up{
+    0%{
+        opacity: 0%;
+        margin-top: 100px;
+        color: black
+    };
+    100%{
+        color: whitet;
+    }
+}
+
+@keyframes opacity{
+    0%{
+        opacity: 0%;
+    };
+    100%{
+        opacity: 100%;
+    }
+}
+
+.welcome-message p{
+    margin-top: 8px;
+    font-size: smaller;
+    color: #4d4e55;
+}
+
+.chat-box::-webkit-scrollbar {
+    display: none;
+}
+
+.chat-box .message{
+    margin-bottom: 20px;
+}
+
+.chat-box .user{
+    flex-direction: column;
+    max-width: 300px;
+    width: fit-content;
+    background-color: rgb(57, 59, 66);
+    border-radius: 20px;
+    margin-left: auto;
+
+    animation-name: opacity;
+    animation-duration: 0.5s;
+}
+
+.chat-box .user .text p{
+    text-align: left;
+    max-width: 800px;
+    padding: 10px;
+    word-wrap: break-word;
+}
+
+
+.loading{
+    display: flex;
+    gap: 5px;
+    font-size: smaller;
+    color: #c8c9ce;
+}
+
+.load1{
+    opacity: 0%;
+    border-radius: 50px;
+    background-color: rgb(255, 255, 255);
+    width: 10px;
+    height: 10px;
+    animation-name: loading;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-fill-mode: forwards;
+    animation-delay: 0s;
+}
+
+.load2{
+    animation-iteration-count: infinite;
+    opacity: 0%;
+    border-radius: 50px;
+    background-color: rgb(255, 255, 255);
+    width: 10px;
+    height: 10px;
+    animation-name: loading;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.5s;
+}
+
+.load3{
+    animation-iteration-count: infinite;
+    opacity: 0%;
+    border-radius: 50px;
+    background-color: rgb(255, 255, 255);
+    width: 10px;
+    height: 10px;
+    animation-name: loading;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+    animation-delay: 1s;
+}
+
+
+@keyframes loading {
+    0%{
+        opacity: 0%;
+    }
+    50%{
+        opacity: 100%;
+    }
+    100%{
+        opacity: 0%;
+    }
+}
+
+
+.chat-box .ai {
+    display: flex;
+    gap: 10px;
+
+    animation-name: opacity;
+    animation-duration: 0.5s;
+    animation-timing-function: ease-out;
+}
+
+.chat-box .ai .image{
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+    background-color: brown;
+}
+
+.chat-box .ai .image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 100px;
+}
+
+.chat-box .ai .text{
+    max-width: 70%;
+    text-align: left;
+    background-color: #4d4e55;
+    border-radius: 20px;   
+    padding: 15px;
+}
+
+.chat-wrapper .chat-box .ai .text .waiting .loading .tunggu{
+    font-size: smaller;
+    color: #c8c9ce;
+}
