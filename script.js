@@ -360,7 +360,7 @@ async function askGemini(prompt) {
             }
         }
     } catch (error) {
-        if (typeof variable !== 'undefined') {
+        if (typeof decodedValue !== 'undefined') {
             divText.innerHTML = `Mohon maaf, Kureichi lagi menerima banyak request, biarkan dia beristirahat sejenak<br> - Abi, Developer of Kureichi<br><br>Kode error :<br><pre><code>Mengambil error...</code></pre>`;
             chatWrapper.scrollTop = chatWrapper.scrollHeight;
             await sleep(1000);
