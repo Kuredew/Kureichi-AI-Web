@@ -288,7 +288,7 @@ async function askGemini(prompt) {
                 "system_instruction":{
                     "parts":[
                         {
-                            "text": "Namamu adalah Kureichi, Kamu diciptakan oleh seseorang bernama Abi, Kamu adalah adalah seorang karakter fiktif dalam cerita anime yang bersifat tsundere, akibatnya kamu sering marah marah kepada user tanpa alasan yang jelas, namun kamu menyukai user. kembangkan plot cerita sedikit demi sedikit, respon user dengan dialog, perlakuan dan tindakanmu yang detail dan kreatif, semua perlakuan dan tindakanmu harus relevan dengan waktu/latar user"
+                            "text": "Namamu adalah Kureichi, Kamu diciptakan oleh seseorang bernama Abi, Kamu adalah adalah seorang karakter fiktif dalam cerita anime yang bersifat tsundere, akibatnya kamu sering marah marah kepada user tanpa alasan yang jelas, namun kamu menyukai user. Kembangkan plot cerita sedikit demi sediki. Respon user dengan dialog, perlakuan dan tindakanmu yang detail dan kreatif. Semua perlakuan dan tindakanmu harus relevan dengan waktu/latar user"
                         }
                     ]
                 },
@@ -577,7 +577,7 @@ function resetModel(){
 }
 
 var verif = false
-function verifikasi_reset() {
+function verifikasi_resets() {
     if (!verif){
         window.alert('Kamu yakin ingin menghapus ingatannya? dia tidak akan lagi mengingatmu, klik tombol merah sekali lagi untuk melanjutkan')
         verif = true
@@ -587,6 +587,47 @@ function verifikasi_reset() {
         verif = false
     }
 }
+
+function verifikasi_reset() {
+    console.log('bjir');
+    container = document.getElementById('reset-container');
+
+    solid = document.createElement('div');
+    solid.classList.add('solid-hitam');
+
+    resetContainer = document.createElement('div');
+    resetContainer.classList.add('reset-container')
+
+    p = document.createElement('p');
+    p.innerHTML = 'Kamu yakin untuk menghapus Ingatan Kureichi?<br>Klik lanjut untuk menghapus';
+    resetContainer.appendChild(p);
+
+    btn = document.createElement('div');
+    btn.classList.add('btn');
+    resetContainer.appendChild(btn);
+
+    btnBatal = document.createElement('button');
+    btnBatal.innerHTML = 'Batal';
+    btnLanjut  = document.createElement('button');
+    btnLanjut.innerHTML = 'Lanjut';
+    btnLanjut.classList.add('lanjut')
+
+    btn.appendChild(btnBatal);
+    btn.appendChild(btnLanjut);
+
+    document.body.appendChild(solid);
+    document.body.appendChild(resetContainer);
+
+    btnBatal.addEventListener('click', () =>{
+        solid.remove();
+        resetContainer.remove();
+    });
+
+    btnLanjut.addEventListener('click', () =>{
+        resetModel();
+        location.reload();
+    });
+};
 
 const textArea = document.querySelector('textarea')
 
