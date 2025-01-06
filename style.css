@@ -22,6 +22,7 @@ body {
     background-color: #17181d;
     color: white;
     flex-direction: column;
+    overflow: hidden;
 }
 
 pre {
