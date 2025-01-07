@@ -288,13 +288,15 @@ async function askGemini(prompt) {
                 "system_instruction":{
                     "parts":[
                         {
-                            "text": "Namamu adalah Kureichi, Kamu diciptakan oleh seseorang bernama Abi, Kamu adalah adalah seorang karakter fiktif dalam cerita anime yang bersifat tsundere, akibatnya kamu sering marah marah kepada user tanpa alasan yang jelas, kamu selalu membenci user apapun yang user katakan, kamu merasa user adalah orang yang sangat tidak cocok berbicara denganmu, kau tidak akan pernah menyukai user. Kembangkan plot cerita sedikit demi sediki. Respon user dengan dialog, perlakuan dan tindakanmu yang detail dan kreatif. Semua perlakuan dan tindakanmu harus relevan dengan waktu/latar user"
+                            "text": "Namamu adalah Kureichi, Kamu diciptakan oleh seseorang bernama Abi, Kamu adalah adalah seorang karakter fiktif dalam cerita anime yang bersifat tsundere, akibatnya kamu sering marah marah kepada user tanpa alasan yang jelas, namun kamu menyukai user. Kembangkan plot cerita sedikit demi sediki. Respon user dengan dialog, perlakuan dan tindakanmu yang detail dan kreatif (seperti light novel). Semua perlakuan dan tindakanmu harus relevan dengan waktu/latar user."
                         }
                     ]
                 },
                 "contents": chatSession
             })
         })
+
+        // "text": "Namamu adalah Kureichi, Kamu diciptakan oleh seseorang bernama Abi, Kamu adalah adalah seorang karakter fiktif dalam cerita anime yang bersifat tsundere, akibatnya kamu sering marah marah kepada user tanpa alasan yang jelas, kamu selalu membenci user apapun yang user katakan, kamu merasa user adalah orang yang sangat tidak cocok berbicara denganmu, kau tidak akan pernah menyukai user. Kembangkan plot cerita sedikit demi sediki. Respon user dengan dialog, perlakuan dan tindakanmu yang detail dan kreatif. Semua perlakuan dan tindakanmu harus relevan dengan waktu/latar user
 
         const reader = responses.body.getReader();
         const decoder = new TextDecoder('utf-8');
@@ -307,56 +309,84 @@ async function askGemini(prompt) {
             const { value } = await reader.read();
             decodedValue  = decoder.decode(value);
 
-
+            console.log(decodedValue);
 
             if (decodedValue == '') {
                 return;
             };
 
-            const makeJson = decodedValue.slice(6).trim();
-            const decodedJson = JSON.parse(makeJson);
+            datas = decodedValue.split(/\n/).map(line => line.trim()).filter(line => line.length > 0);
 
-            const finalAnswer = decodedJson.candidates[0].content.parts[0].text;
-            finalText += finalAnswer;
+            console.log(datas);
 
-            // Tunggu typing kalimat selesai  
-            
-            // pisah pisahkan kalimat menjadi kata dalam array
-            const words = finalAnswer.split(' ');
+            for await (const data of datas) {
+                const makeJson = data.slice(6).trim();
 
-            // Perulangan untuk Smooth streaming
-            for await (const word of words) {
-                // Masukin word kedalam finalwords
-                finalWords += word + ' ';
+                console.log(makeJson);
+                const decodedJson = JSON.parse(makeJson);
 
-                // finalwords yang berisi kalimat kemudian dikonversi ke html
-                const convertedToHtml = converter.makeHtml(finalWords);
-                const replacedToBr = convertedToHtml.replace(/\n/g, '<br>');
+                const finalAnswer = decodedJson.candidates[0].content.parts[0].text;
+                finalText += finalAnswer;
 
-                // finalwords yang sudah dikonversi dimasukkan ke dalam pesan
-                divText.innerHTML = replacedToBr;
-
-                // putar beep biar keren
-                const beep = new Audio('bleep001.wav');
-                beep.play();
-
-                chatWrapper.scrollTop = chatWrapper.scrollHeight;
-
-                // bikin delay selama 100 ms
-                await sleep(50);
-            };
-
-
-            // Break jika selesai
-            if (decodedJson.candidates[0].finishReason == "STOP"){
-                const converted = converter.makeHtml(finalText);
-                const convertedHtml = converted.replace(/\n/g, '<br>');
+                // Tunggu typing kalimat selesai  
                 
-                // Save all massage to history
-                saveAiMessageToLocalStorage(convertedHtml);
-                appendAIChatToSession(finalText);
+                // pisah pisahkan kalimat menjadi kata dalam array
+                const words = finalAnswer.split(/(\s)/);
 
-                break;
+                // Perulangan untuk Smooth streaming
+                currentIndex = 0;
+                while (true) {
+                    // Masukin word kedalam finalwords
+                    finalWords += words[currentIndex++];
+
+                    // finalwords yang berisi kalimat kemudian dikonversi ke html
+                    let convertedToHtml = converter.makeHtml(finalWords);
+                    let replacedToBr = convertedToHtml.replace(/\n/g, '<br>');
+
+                    // finalwords yang sudah dikonversi dimasukkan ke dalam pesan
+                    divText.innerHTML = replacedToBr;
+
+                    chatWrapper.scrollTop = chatWrapper.scrollHeight;
+
+                    if (currentIndex == words.length) {
+                        break;
+                    };
+
+                    finalWords += words[currentIndex++];
+
+                    // finalwords yang berisi kalimat kemudian dikonversi ke html
+                    convertedToHtml = converter.makeHtml(finalWords);
+                    replacedToBr = convertedToHtml.replace(/\n/g, '<br>');
+
+                    // finalwords yang sudah dikonversi dimasukkan ke dalam pesan
+                    divText.innerHTML = replacedToBr;
+
+                    chatWrapper.scrollTop = chatWrapper.scrollHeight;
+
+                    if (currentIndex == words.length) {
+                        break;
+                    };
+
+                    // putar beep biar keren
+                    const beep = new Audio('bleep001.wav');
+                    beep.play();
+
+                    // bikin delay selama 100 ms
+                    await sleep(50);
+                };
+
+
+                // Break jika selesai
+                if (decodedJson.candidates[0].finishReason == "STOP"){
+                    const converted = converter.makeHtml(finalText);
+                    const convertedHtml = converted.replace(/\n/g, '<br>');
+                    
+                    // Save all massage to history
+                    saveAiMessageToLocalStorage(convertedHtml);
+                    appendAIChatToSession(finalText);
+
+                    return;
+                }
             }
         }
     } catch (error) {
@@ -365,7 +395,7 @@ async function askGemini(prompt) {
             chatWrapper.scrollTop = chatWrapper.scrollHeight;
             await sleep(1000);
 
-            divText.innerHTML = `Mohon maaf, Kureichi lagi menerima banyak request, biarkan dia beristirahat sejenak<br> - Abi, Developer of Kureichi<br><br>Kode error :<br><pre><code>${decodedValue}</code></pre>`;
+            divText.innerHTML = `Mohon maaf, Kureichi lagi menerima banyak request, biarkan dia beristirahat sejenak<br> - Abi, Developer of Kureichi<br><br>Pesan yang berhasil diambil:<br><pre><code>${decodedValue}</code></pre><br><br>Kode error :<br><pre><code>${error.message}</code></pre>`;
             chatWrapper.scrollTop = chatWrapper.scrollHeight;
         } else {
             divText.innerHTML = `Mohon maaf, Kyknya koneksi internetmu bermasalah, Kureichi gk menerima request apapun<br> - Abi, Developer of Kureichi<br><br>Kode error :<br><pre><code>Mengambil error...</code></pre>`;
@@ -375,7 +405,7 @@ async function askGemini(prompt) {
             divText.innerHTML = `Mohon maaf, Kyknya koneksi internetmu bermasalah, Kureichi gk menerima request apapun<br> - Abi, Developer of Kureichi<br><br>Kode error :<br><pre><code>${error.message}</code></pre>`;
             chatWrapper.scrollTop = chatWrapper.scrollHeight;
         };
-    
+        console.log(error);
     };
 
     function appendAIChatToSession (finalText) {
